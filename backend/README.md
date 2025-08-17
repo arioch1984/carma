@@ -15,8 +15,8 @@ This folder does not yet include the Laravel code: you will generate it with Com
 Run from the `backend` folder (macOS/OrbStack):
 
 ```bash
-chmod +x ./init.sh
-./init.sh
+chmod +x ./script/*.sh
+./script/init.sh
 ```
 
 This script will:
@@ -121,7 +121,7 @@ The main files are already in place:
 - `docker/nginx/default.conf`
 
 ## 7) Useful commands
-- Start/stop: `docker compose up -d`, `docker compose down`
+- Start/stop: `./script/start.sh`, `./script/stop.sh` (add `-v` to stop to remove volumes)
 - Logs: `docker compose logs -f web`, `docker compose logs -f app`
 - Artisan/Composer: `docker compose exec app php artisan route:list`, `docker compose exec app composer require vendor/package`
 - DB: `docker compose exec db psql -U app -d app -c "SELECT NOW();"`

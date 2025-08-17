@@ -1,6 +1,11 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+# Resolve backend directory (parent of this script dir)
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+BACKEND_DIR="${SCRIPT_DIR%/script}"
+cd "$BACKEND_DIR"
+
 # Initialize Laravel project inside ./backend using Composer Docker image
 if [ -f "artisan" ]; then
   echo "Laravel project already present (artisan found). Skipping create-project."
@@ -22,16 +27,18 @@ fi
 
 # Ensure DB settings for Postgres in .env
 if [ -f .env ]; then
-  sed -i '' -e 's#^APP_URL=.*#APP_URL=http://localhost:8080#' .env || true
-  sed -i '' -e 's#^DB_CONNECTION=.*#DB_CONNECTION=pgsql#' .env || true
-  sed -i '' -e 's#^DB_HOST=.*#DB_HOST=db#' .env || true
-  sed -i '' -e 's#^DB_PORT=.*#DB_PORT=5432#' .env || true
-  sed -i '' -e 's#^DB_DATABASE=.*#DB_DATABASE=app#' .env || true
-  sed -i '' -e 's#^DB_USERNAME=.*#DB_USERNAME=app#' .env || true
-  sed -i '' -e 's#^DB_PASSWORD=.*#DB_PASSWORD=app#' .env || true
+  # GNU/BSD compatible sed in-place handling
+  sed -i.bak -e 's#^APP_URL=.*#APP_URL=http://localhost:8080#' .env || true
+  sed -i.bak -e 's#^DB_CONNECTION=.*#DB_CONNECTION=pgsql#' .env || true
+  sed -i.bak -e 's#^DB_HOST=.*#DB_HOST=db#' .env || true
+  sed -i.bak -e 's#^DB_PORT=.*#DB_PORT=5432#' .env || true
+  sed -i.bak -e 's#^DB_DATABASE=.*#DB_DATABASE=app#' .env || true
+  sed -i.bak -e 's#^DB_USERNAME=.*#DB_USERNAME=app#' .env || true
+  sed -i.bak -e 's#^DB_PASSWORD=.*#DB_PASSWORD=app#' .env || true
+  rm -f .env.bak
 fi
 
-# Generate key
+# Generate key (idempotent)
 docker compose run --rm app php artisan key:generate || true
 
 # Up services

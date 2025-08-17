@@ -13,8 +13,8 @@ cd backend
 ```
 2) Run the automatic setup (no local PHP/Composer required):
 ```bash
-chmod +x ./init.sh
-./init.sh
+chmod +x ./script/*.sh
+./script/init.sh
 ```
 This will create the Laravel project (if missing), configure the environment, and start the containers.
 
